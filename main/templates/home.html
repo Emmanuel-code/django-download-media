@@ -1,0 +1,183 @@
+<!--{% extends 'index.html' % }-->
+{% extends 'index.html' %}
+{% load bootstrap_tags %}
+
+{% load static %}
+{% block content%}
+<style>
+    .buttons{
+        display:flex;
+        justify-content:space-around;
+
+    }
+
+.button {
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  &:hover {
+    fill: white;
+  }
+}
+.wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.blurEffect {
+    -webkit-filter: blur(7px);
+    -o-filter: blur(7px);
+    -moz-filter: blur(7px);
+    -ms-filter: blur(7px);
+    filter: blur(7px);
+}
+
+.content {
+    position: absolute;
+    display: inline-block;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    color: #FFF;
+    width: 100%;
+    text-align: center;
+    z-index: 999;
+}
+
+.play {
+    background-color:;
+    cursor: pointer;
+    border: 1px solid #FFF;
+    display: inline-block;
+    text-align: center;
+    padding: 5px 25px;
+}
+
+.play:hover {
+    color: red;
+}
+
+
+
+
+</style>
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="text" name="youtube_url" class="form-control" placeholder="Paste link">
+        <br>
+        <div style="display:flex; justify-content:space-around; place-items:center;" class="">
+            <input type="submit" value="GET ME" style="place-items:center; height:50px; width:30%;"
+                   class="btn btn-info btn-block">
+            <a href="https://youtube.com" target="_blank" title="Browse youtube for the video link you want to download"
+               style="place-items:center; height:50px; width:30%;" class="btn btn-info btn-block">BROWSE YOUTUBE</a>
+
+        </div>
+
+
+    </form>
+</div>
+<br>
+
+{% if youtube.title %}
+<center>
+    <div class="wrapper-video">
+
+        <iframe id="video" src="//www.youtube.com/embed/FKWwdQu6_ok?enablejsapi=1&html5=1&mute=1" frameborder="0"
+                allowfullscreen></iframe>
+
+        <div class="buttons">
+            <!-- if we needed to change height/width we could use viewBox here -->
+            <button class="button" id="play-button">
+                <p>play</p></button>
+            <button class="button" id="pause-button">
+                <p>pause</p>
+            </button>
+        </div>
+    </div>
+</center>
+<div class="box">
+    <div class="img-thumb">
+        <img class="img-responsive" src="{{ thumb }}">
+    </div>
+    <div id="desl" class="v-about">
+        <h3>{{ youtube.title }}</h3>
+
+
+    </div>
+</div>
+
+<div class="downloads">
+
+    <p class="h3 text-center mt-5 mb-5">More Options</p>
+    <table class="table mt-5 mb-5">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Resolution</th>
+
+            <th scope="col">Extension</th>
+            <th scope="col">Download</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% for stream in youtube.streams %}
+        <tr>
+            <td>{{ stream.resolution }}</td>
+
+            <td>video/mp4</td>
+            <td><a href="{{ stream.video_url }}" style="text-decoration: none;"
+                   download="{{ youtube.title }}.{{ d }}" target="_blank">Download <i
+                    class=" fa fa-download"></i></a></td>
+        </tr>
+        {% endfor %}
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+{% else%}
+
+{% endif %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+<script>
+       // https://developers.google.com/youtube/iframe_api_reference
+
+// global variable for the player
+var player;
+
+// this function gets called when API is ready to use
+function onYouTubePlayerAPIReady() {
+  // create the global player from the specific iframe (#video)
+  player = new YT.Player("video", {
+    events: {
+      // call this function when player is ready to use
+      onReady: onPlayerReady
+    }
+  });
+}
+
+function onPlayerReady(event) {
+  // bind events
+  var playButton = document.getElementById("play-button");
+  playButton.addEventListener("click", function () {
+    player.playVideo();
+  });
+
+  var pauseButton = document.getElementById("pause-button");
+  pauseButton.addEventListener("click", function () {
+    player.pauseVideo();
+  });
+}
+
+// Inject YouTube API script
+var tag = document.createElement("script");
+tag.src = "https://youtube.com/player_api";
+var firstScriptTag = document.getElementsByTagName("script")[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+</script>
+{%endblock%}
