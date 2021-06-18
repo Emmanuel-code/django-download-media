@@ -11,7 +11,7 @@ pypiwin32==223
 pytube==10.8.1
 pytube3==9.6.4
 pytz
-pywin32
+
 requests
 sqlparse
 typing-extensions
